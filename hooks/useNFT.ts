@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useContract } from './useContract'
 import { NFT, NFTMetadata } from '@/types/contracts'
-import { getNFTsByOwner, getNFTMetadata, getTotalSupply, convertToIPFSGateway } from '@/lib/contract'
+import { getNFTsByOwner, getNFTMetadata, getTotalSupply, convertToIPFSGateway, getAuction } from '@/lib/contract'
 
 export function useNFT() {
   const { client, account, isConnected } = useContract()
@@ -36,12 +36,21 @@ export function useNFT() {
         ? convertToIPFSGateway(metadata.image)
         : '/placeholder.svg'
       
+      let hasEndedAuction = false
+      try {
+        const auctionData = await getAuction(client, tokenId)
+        hasEndedAuction = auctionData.ended === true
+      } catch (err) {
+        console.log(`No auction data for NFT ${tokenId}`)
+      }
+      
       return {
         tokenId: Number(tokenId),
         owner,
         ipfsHash: uri,
         imageUrl,
         isInAuction,
+        hasEndedAuction,
         metadata: metadata || undefined
       }
     } catch (err) {

@@ -62,7 +62,7 @@ export function NFTCard({ nft, showActions = true, onCreateAuction, onViewDetail
 
         {showActions && (
           <div className="flex gap-2 pt-2">
-            {!nft.isInAuction && onCreateAuction && (
+            {!nft.isInAuction && !nft.hasEndedAuction && onCreateAuction && (
               <Button
                 size="sm"
                 className="flex-1"

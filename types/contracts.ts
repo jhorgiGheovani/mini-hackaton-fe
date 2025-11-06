@@ -4,6 +4,7 @@ export interface NFT {
   ipfsHash: string
   imageUrl: string
   isInAuction: boolean
+  hasEndedAuction?: boolean
   metadata?: NFTMetadata
 }
 
