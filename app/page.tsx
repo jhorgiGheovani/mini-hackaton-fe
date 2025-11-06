@@ -37,7 +37,7 @@ export default function Home() {
   const myAuctions = account ? getMyAuctions(account.address) : []
   const myBids = account ? getMyBids(account.address) : []
 
-  const CONTRACT_ADDRESS = '0x45fB597706689a37E71274Ef72c46B5Ae1FaB61D'
+  const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || ''
 
   const filteredNFTs = allNFTs.filter(nft => 
     nft.owner.toLowerCase() === CONTRACT_ADDRESS.toLowerCase()
