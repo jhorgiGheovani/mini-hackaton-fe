@@ -37,6 +37,12 @@ export default function Home() {
   const myAuctions = account ? getMyAuctions(account.address) : []
   const myBids = account ? getMyBids(account.address) : []
 
+  const CONTRACT_ADDRESS = '0x45fB597706689a37E71274Ef72c46B5Ae1FaB61D'
+
+  const filteredNFTs = allNFTs.filter(nft => 
+    nft.owner.toLowerCase() === CONTRACT_ADDRESS.toLowerCase()
+  )
+
   useEffect(() => {
     if (isConnected && client) {
       fetchAllNFTs()
@@ -155,7 +161,7 @@ export default function Home() {
                 <p className="text-muted-foreground">Semua NFT yang ada di marketplace</p>
               </div>
               <NFTGrid
-                nfts={allNFTs}
+                nfts={filteredNFTs}
                 loading={nftLoading}
               />
             </TabsContent>
