@@ -59,7 +59,11 @@ export function CreateAuctionModal({ open, onOpenChange, nft, onSuccess }: Creat
     setLoading(true)
 
     try {
-      await createAuction(
+      console.log('🔨 Creating auction untuk NFT #', nft.tokenId)
+      console.log('📊 Starting Bid:', startingBid, 'ETH')
+      console.log('⏰ Duration:', parseInt(duration), 'seconds')
+      
+      const result = await createAuction(
         client,
         account,
         BigInt(nft.tokenId),
@@ -67,9 +71,12 @@ export function CreateAuctionModal({ open, onOpenChange, nft, onSuccess }: Creat
         parseInt(duration)
       )
 
+      console.log('✅ Auction Created! Transaction Hash:', result.transactionHash)
+      console.log('📡 Event AuctionCreated triggered dari smart contract')
+
       toast({
-        title: 'Auction Created!',
-        description: `Auction buat NFT #${nft.tokenId} udah dibuat!`
+        title: 'Auction Created! 🎉',
+        description: `Auction buat NFT #${nft.tokenId} udah dibuat! Event AuctionCreated triggered.`
       })
 
       setStartingBid('')
@@ -77,7 +84,7 @@ export function CreateAuctionModal({ open, onOpenChange, nft, onSuccess }: Creat
       onOpenChange(false)
       onSuccess?.()
     } catch (error: any) {
-      console.error('Create auction error:', error)
+      console.error('❌ Create auction error:', error)
       toast({
         title: 'Failed',
         description: error.message || 'Gagal bikin auction',

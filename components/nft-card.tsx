@@ -83,7 +83,13 @@ export function NFTCard({ nft, userAddress, showActions = true, onCreateAuction,
               <Button
                 size="sm"
                 className="flex-1"
-                onClick={() => onCreateAuction(nft)}
+                onClick={() => {
+                  console.log('🎯 Button Create Auction clicked untuk NFT #', nft.tokenId)
+                  console.log('👤 Creator:', nft.creator)
+                  console.log('🏠 Owner:', nft.owner)
+                  console.log('📝 Opening modal untuk input auction details...')
+                  onCreateAuction(nft)
+                }}
               >
                 <Hammer className="w-4 h-4 mr-1" />
                 Create Auction
