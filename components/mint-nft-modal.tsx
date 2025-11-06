@@ -32,11 +32,22 @@ export function MintNFTModal({ open, onOpenChange, onSuccess }: MintNFTModalProp
     description: '',
     artist: '',
     category: '',
-    rarity: '',
-    initialPrice: '0.01',
-    auctionStartTime: '',
-    auctionEndTime: '',
   })
+
+  const artCategories = [
+    'Digital Art',
+    'Abstract',
+    'Portrait',
+    'Landscape',
+    'Pop Art',
+    'Surrealism',
+    'Photography',
+    '3D Art',
+    'Anime',
+    'Pixel Art',
+    'Street Art',
+    'Contemporary',
+  ]
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -128,19 +139,9 @@ export function MintNFTModal({ open, onOpenChange, onSuccess }: MintNFTModalProp
       const attributes = []
       if (formData.artist) attributes.push({ trait_type: 'Artist', value: formData.artist })
       if (formData.category) attributes.push({ trait_type: 'Category', value: formData.category })
-      if (formData.rarity) attributes.push({ trait_type: 'Rarity', value: formData.rarity })
       uploadFormData.append('attributes', JSON.stringify(attributes))
       
       uploadFormData.append('created_at', new Date().toISOString())
-      uploadFormData.append('initial_price', `${formData.initialPrice} ETH`)
-      
-      if (formData.auctionStartTime && formData.auctionEndTime) {
-        const auction = {
-          start_time: new Date(formData.auctionStartTime).toISOString(),
-          end_time: new Date(formData.auctionEndTime).toISOString(),
-        }
-        uploadFormData.append('auction', JSON.stringify(auction))
-      }
 
       const uploadResponse = await fetch('http://localhost:3000/api/nft/upload', {
         method: 'POST',
@@ -178,10 +179,6 @@ export function MintNFTModal({ open, onOpenChange, onSuccess }: MintNFTModalProp
         description: '',
         artist: '',
         category: '',
-        rarity: '',
-        initialPrice: '0.01',
-        auctionStartTime: '',
-        auctionEndTime: '',
       })
       setSelectedFile(null)
       setImagePreview('')
@@ -256,7 +253,7 @@ export function MintNFTModal({ open, onOpenChange, onSuccess }: MintNFTModalProp
             />
           </div>
 
-          <div className="grid grid-cols-1 gap-4">
+          <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Nama NFT *</Label>
               <Input
@@ -279,14 +276,12 @@ export function MintNFTModal({ open, onOpenChange, onSuccess }: MintNFTModalProp
                 rows={3}
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="artist">Artist</Label>
               <Input
                 id="artist"
-                placeholder="Nama artist"
+                placeholder="Nama artist lo"
                 value={formData.artist}
                 onChange={(e) => handleInputChange('artist', e.target.value)}
                 disabled={loading}
@@ -295,70 +290,20 @@ export function MintNFTModal({ open, onOpenChange, onSuccess }: MintNFTModalProp
 
             <div className="space-y-2">
               <Label htmlFor="category">Category</Label>
-              <Input
+              <select
                 id="category"
-                placeholder="Digital Art"
                 value={formData.category}
                 onChange={(e) => handleInputChange('category', e.target.value)}
                 disabled={loading}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="rarity">Rarity</Label>
-              <Input
-                id="rarity"
-                placeholder="Common, Rare, Legendary"
-                value={formData.rarity}
-                onChange={(e) => handleInputChange('rarity', e.target.value)}
-                disabled={loading}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="initialPrice">Initial Price (ETH)</Label>
-              <Input
-                id="initialPrice"
-                type="number"
-                step="0.001"
-                placeholder="0.01"
-                value={formData.initialPrice}
-                onChange={(e) => handleInputChange('initialPrice', e.target.value)}
-                disabled={loading}
-              />
-            </div>
-          </div>
-
-          <div className="border-t pt-4 space-y-2">
-            <Label className="text-sm font-medium">Auction (Optional)</Label>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="auctionStartTime" className="text-xs">
-                  Start Time
-                </Label>
-                <Input
-                  id="auctionStartTime"
-                  type="datetime-local"
-                  value={formData.auctionStartTime}
-                  onChange={(e) => handleInputChange('auctionStartTime', e.target.value)}
-                  disabled={loading}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="auctionEndTime" className="text-xs">
-                  End Time
-                </Label>
-                <Input
-                  id="auctionEndTime"
-                  type="datetime-local"
-                  value={formData.auctionEndTime}
-                  onChange={(e) => handleInputChange('auctionEndTime', e.target.value)}
-                  disabled={loading}
-                />
-              </div>
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="">Pilih kategori seni</option>
+                {artCategories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
