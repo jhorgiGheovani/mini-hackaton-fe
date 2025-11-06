@@ -1,10 +1,9 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { ethers } from 'ethers'
 import { useContract } from './useContract'
 import { NFT, NFTMetadata } from '@/types/contracts'
-import { getNFTsByOwner, getNFTMetadata, getTotalSupply } from '@/lib/contract'
+import { getNFTsByOwner, getNFTMetadata, getTotalSupply, convertToIPFSGateway } from '@/lib/contract'
 
 export function useNFT() {
   const { client, account, isConnected } = useContract()
@@ -15,7 +14,9 @@ export function useNFT() {
 
   const fetchNFTMetadata = async (ipfsUrl: string): Promise<NFTMetadata | null> => {
     try {
-      const response = await fetch(ipfsUrl)
+      const gatewayUrl = convertToIPFSGateway(ipfsUrl)
+      console.log('Fetching metadata from:', gatewayUrl)
+      const response = await fetch(gatewayUrl)
       if (!response.ok) return null
       return await response.json()
     } catch (err) {
@@ -24,16 +25,22 @@ export function useNFT() {
     }
   }
 
-  const loadNFTData = async (tokenId: number, provider: ethers.Provider): Promise<NFT | null> => {
+  const loadNFTData = async (tokenId: bigint): Promise<NFT | null> => {
+    if (!client) return null
+
     try {
-      const { uri, owner, isInAuction } = await getNFTMetadata(provider, tokenId)
+      const { uri, owner, isInAuction } = await getNFTMetadata(client, tokenId)
       const metadata = await fetchNFTMetadata(uri)
       
+      const imageUrl = metadata?.image 
+        ? convertToIPFSGateway(metadata.image)
+        : '/placeholder.svg'
+      
       return {
-        tokenId,
+        tokenId: Number(tokenId),
         owner,
         ipfsHash: uri,
-        imageUrl: metadata?.image || uri,
+        imageUrl,
         isInAuction,
         metadata: metadata || undefined
       }
@@ -50,12 +57,11 @@ export function useNFT() {
     setError(null)
 
     try {
-      // Get provider properly from Panna client
-      const provider = new ethers.BrowserProvider((window as any).ethereum)
-      const tokenIds = await getNFTsByOwner(provider, account.address)
+      const tokenIds = await getNFTsByOwner(client, account.address)
+      console.log('Found NFTs for user:', tokenIds)
       
       const nftsData = await Promise.all(
-        tokenIds.map(tokenId => loadNFTData(tokenId, provider))
+        tokenIds.map(tokenId => loadNFTData(tokenId))
       )
       
       setMyNFTs(nftsData.filter((nft): nft is NFT => nft !== null))
@@ -74,12 +80,19 @@ export function useNFT() {
     setError(null)
 
     try {
-      const provider = new ethers.BrowserProvider((window as any).ethereum)
-      const totalSupply = await getTotalSupply(provider)
+      const totalSupply = await getTotalSupply(client)
       const total = Number(totalSupply)
+      console.log('Total NFTs minted:', total)
+      
+      if (total === 0) {
+        console.log('Belum ada NFT yang di-mint')
+        setAllNFTs([])
+        setLoading(false)
+        return
+      }
       
       const nftsData = await Promise.all(
-        Array.from({ length: total }, (_, i) => loadNFTData(i + 1, provider))
+        Array.from({ length: total }, (_, i) => loadNFTData(BigInt(i + 1)))
       )
       
       setAllNFTs(nftsData.filter((nft): nft is NFT => nft !== null))

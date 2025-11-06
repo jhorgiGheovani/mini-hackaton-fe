@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { ethers } from 'ethers'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -60,12 +59,10 @@ export function CreateAuctionModal({ open, onOpenChange, nft, onSuccess }: Creat
     setLoading(true)
 
     try {
-      const provider = new ethers.BrowserProvider((window as any).ethereum)
-      const signer = await provider.getSigner()
-
       await createAuction(
-        signer,
-        nft.tokenId,
+        client,
+        account,
+        BigInt(nft.tokenId),
         startingBid,
         parseInt(duration)
       )

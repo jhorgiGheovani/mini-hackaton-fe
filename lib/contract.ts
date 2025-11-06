@@ -1,183 +1,399 @@
-import { ethers } from 'ethers'
 import { liskSepolia } from 'panna-sdk'
+import { prepareContractCall, sendTransaction, readContract, waitForReceipt } from 'thirdweb/transaction'
+import { getContract } from 'thirdweb/contract'
+import { toWei } from 'thirdweb/utils'
+import { Auction } from '@/types/contracts'
 
-// BloomNFT Contract Address on Lisk Sepolia
 export const BLOOM_NFT_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || ''
 
-// BloomNFT Contract ABI
 export const BLOOM_NFT_ABI = [
-  "function mint(string memory ipfsHash) external payable returns (uint256)",
-  "function createAuction(uint256 tokenId, uint256 startingBid, uint256 durationInSecond) external",
-  "function bid(uint256 tokenId) external payable",
-  "function endAuction(uint256 tokenId) external",
-  "function cancelAuction(uint256 tokenId) external",
-  "function getAuction(uint256 tokenId) external view returns (tuple(uint256 tokenId, address seller, uint256 startingBid, uint256 highestBid, address highestBidder, uint256 startTime, uint256 endTime, bool active, bool ended))",
-  "function isAuctionActive(uint256 tokenId) external view returns (bool)",
-  "function getTimeRemaining(uint256 tokenId) external view returns (uint256)",
-  "function tokenURI(uint256 tokenId) external view returns (string memory)",
-  "function ownerOf(uint256 tokenId) external view returns (address)",
-  "function balanceOf(address owner) external view returns (uint256)",
-  "function tokenOfOwnerByIndex(address owner, uint256 index) external view returns (uint256)",
-  "function totalSupply() external view returns (uint256)",
-  "function tokenByIndex(uint256 index) external view returns (uint256)",
-  "function isInAuction(uint256 tokenId) external view returns (bool)",
-  "function biayaAdmin() external view returns (uint256)",
-  "function adminFeePercentage() external view returns (uint256)",
-  "function getAccumulatedFees() external view returns (uint256)",
-  "event NFTMinted(uint256 indexed tokenId, address indexed creator, string ipfsHash)",
-  "event AuctionCreated(uint256 indexed tokenId, address indexed seller, uint256 startingBid, uint256 endTime)",
-  "event BidPlaced(uint256 indexed tokenId, address indexed bidder, uint256 amount)",
-  "event AuctionEnded(uint256 indexed tokenId, address indexed winner, uint256 amount)",
-  "event AuctionCanceled(uint256 indexed tokenId)"
-]
-
-export async function getBloomNFTContract(signerOrProvider: ethers.Signer | ethers.Provider) {
-  return new ethers.Contract(
-    BLOOM_NFT_CONTRACT_ADDRESS,
-    BLOOM_NFT_ABI,
-    signerOrProvider
-  )
-}
-
-// Helper to get provider from Panna client
-export function getProviderFromClient(client: any) {
-  if (!client) throw new Error('Client not available')
-  
-  // Panna SDK client already has ethereum provider interface
-  if (client.request) {
-    return new ethers.BrowserProvider(client)
+  {
+    "type": "function",
+    "name": "mint",
+    "inputs": [{"name": "ipfsHash", "type": "string"}],
+    "outputs": [{"name": "", "type": "uint256"}],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "name": "createAuction",
+    "inputs": [
+      {"name": "tokenId", "type": "uint256"},
+      {"name": "startingBid", "type": "uint256"},
+      {"name": "durationInSecond", "type": "uint256"}
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "bid",
+    "inputs": [{"name": "tokenId", "type": "uint256"}],
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "name": "endAuction",
+    "inputs": [{"name": "tokenId", "type": "uint256"}],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "cancelAuction",
+    "inputs": [{"name": "tokenId", "type": "uint256"}],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "getAuction",
+    "inputs": [{"name": "tokenId", "type": "uint256"}],
+    "outputs": [{
+      "name": "",
+      "type": "tuple",
+      "components": [
+        {"name": "tokenId", "type": "uint256"},
+        {"name": "seller", "type": "address"},
+        {"name": "startingBid", "type": "uint256"},
+        {"name": "highestBid", "type": "uint256"},
+        {"name": "highestBidder", "type": "address"},
+        {"name": "startTime", "type": "uint256"},
+        {"name": "endTime", "type": "uint256"},
+        {"name": "active", "type": "bool"},
+        {"name": "ended", "type": "bool"}
+      ]
+    }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "isAuctionActive",
+    "inputs": [{"name": "tokenId", "type": "uint256"}],
+    "outputs": [{"name": "", "type": "bool"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getTimeRemaining",
+    "inputs": [{"name": "tokenId", "type": "uint256"}],
+    "outputs": [{"name": "", "type": "uint256"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "tokenURI",
+    "inputs": [{"name": "tokenId", "type": "uint256"}],
+    "outputs": [{"name": "", "type": "string"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "ownerOf",
+    "inputs": [{"name": "tokenId", "type": "uint256"}],
+    "outputs": [{"name": "", "type": "address"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "balanceOf",
+    "inputs": [{"name": "owner", "type": "address"}],
+    "outputs": [{"name": "", "type": "uint256"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "tokenOfOwnerByIndex",
+    "inputs": [
+      {"name": "owner", "type": "address"},
+      {"name": "index", "type": "uint256"}
+    ],
+    "outputs": [{"name": "", "type": "uint256"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "totalSupply",
+    "inputs": [],
+    "outputs": [{"name": "", "type": "uint256"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "tokenByIndex",
+    "inputs": [{"name": "index", "type": "uint256"}],
+    "outputs": [{"name": "", "type": "uint256"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "isInAuction",
+    "inputs": [{"name": "tokenId", "type": "uint256"}],
+    "outputs": [{"name": "", "type": "bool"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "biayaAdmin",
+    "inputs": [],
+    "outputs": [{"name": "", "type": "uint256"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "adminFeePercentage",
+    "inputs": [],
+    "outputs": [{"name": "", "type": "uint256"}],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getAccumulatedFees",
+    "inputs": [],
+    "outputs": [{"name": "", "type": "uint256"}],
+    "stateMutability": "view"
   }
-  
-  // Fallback if client structure is different
-  if (client.provider) {
-    return new ethers.BrowserProvider(client.provider)
-  }
-  
-  throw new Error('Invalid client structure')
-}
+] as const
 
-// Mint NFT with IPFS hash
-export async function mintNFT(
-  signer: ethers.Signer,
-  ipfsHash: string,
-  adminFee: string
-) {
-  const contract = await getBloomNFTContract(signer)
-  const tx = await contract.mint(ipfsHash, {
-    value: ethers.parseEther(adminFee)
+export async function mintNFT(client: any, account: any, ipfsHash: string, adminFee: string) {
+  const tx = prepareContractCall({
+    contract: getContract({
+      client,
+      chain: liskSepolia,
+      address: BLOOM_NFT_CONTRACT_ADDRESS,
+    }),
+    method: 'function mint(string ipfsHash) payable returns (uint256)',
+    params: [ipfsHash],
+    value: toWei(adminFee),
   })
-  const receipt = await tx.wait()
-  
-  const mintEvent = receipt.logs.find(
-    (log: any) => log.fragment && log.fragment.name === 'NFTMinted'
-  )
-  
-  return {
-    transactionHash: receipt.hash,
-    tokenId: mintEvent ? mintEvent.args[0] : null
-  }
+
+  const result = await sendTransaction({
+    account,
+    transaction: tx,
+  })
+
+  await waitForReceipt(result)
+  return result
 }
 
-// Create auction for NFT
 export async function createAuction(
-  signer: ethers.Signer,
-  tokenId: number,
+  client: any,
+  account: any,
+  tokenId: bigint,
   startingBid: string,
   durationInSeconds: number
 ) {
-  const contract = await getBloomNFTContract(signer)
-  const tx = await contract.createAuction(
-    tokenId,
-    ethers.parseEther(startingBid),
-    durationInSeconds
-  )
-  const receipt = await tx.wait()
-  return receipt
-}
-
-// Place bid on auction
-export async function placeBid(
-  signer: ethers.Signer,
-  tokenId: number,
-  bidAmount: string
-) {
-  const contract = await getBloomNFTContract(signer)
-  const tx = await contract.bid(tokenId, {
-    value: ethers.parseEther(bidAmount)
+  const tx = prepareContractCall({
+    contract: getContract({
+      client,
+      chain: liskSepolia,
+      address: BLOOM_NFT_CONTRACT_ADDRESS,
+    }),
+    method: 'function createAuction(uint256 tokenId, uint256 startingBid, uint256 durationInSecond)',
+    params: [tokenId, toWei(startingBid), BigInt(durationInSeconds)],
   })
-  const receipt = await tx.wait()
-  return receipt
+
+  const result = await sendTransaction({
+    account,
+    transaction: tx,
+  })
+
+  await waitForReceipt(result)
+  return result
 }
 
-// End auction
-export async function endAuction(
-  signer: ethers.Signer,
-  tokenId: number
-) {
-  const contract = await getBloomNFTContract(signer)
-  const tx = await contract.endAuction(tokenId)
-  const receipt = await tx.wait()
-  return receipt
+export async function placeBid(client: any, account: any, tokenId: bigint, bidAmount: string) {
+  const tx = prepareContractCall({
+    contract: getContract({
+      client,
+      chain: liskSepolia,
+      address: BLOOM_NFT_CONTRACT_ADDRESS,
+    }),
+    method: 'function bid(uint256 tokenId) payable',
+    params: [tokenId],
+    value: toWei(bidAmount),
+  })
+
+  const result = await sendTransaction({
+    account,
+    transaction: tx,
+  })
+
+  await waitForReceipt(result)
+  return result
 }
 
-// Cancel auction
-export async function cancelAuction(
-  signer: ethers.Signer,
-  tokenId: number
-) {
-  const contract = await getBloomNFTContract(signer)
-  const tx = await contract.cancelAuction(tokenId)
-  const receipt = await tx.wait()
-  return receipt
+export async function endAuction(client: any, account: any, tokenId: bigint) {
+  const tx = prepareContractCall({
+    contract: getContract({
+      client,
+      chain: liskSepolia,
+      address: BLOOM_NFT_CONTRACT_ADDRESS,
+    }),
+    method: 'function endAuction(uint256 tokenId)',
+    params: [tokenId],
+  })
+
+  const result = await sendTransaction({
+    account,
+    transaction: tx,
+  })
+
+  await waitForReceipt(result)
+  return result
 }
 
-// Get auction info
-export async function getAuction(
-  provider: ethers.Provider,
-  tokenId: number
-) {
-  const contract = await getBloomNFTContract(provider)
-  return await contract.getAuction(tokenId)
+export async function cancelAuction(client: any, account: any, tokenId: bigint) {
+  const tx = prepareContractCall({
+    contract: getContract({
+      client,
+      chain: liskSepolia,
+      address: BLOOM_NFT_CONTRACT_ADDRESS,
+    }),
+    method: 'function cancelAuction(uint256 tokenId)',
+    params: [tokenId],
+  })
+
+  const result = await sendTransaction({
+    account,
+    transaction: tx,
+  })
+
+  await waitForReceipt(result)
+  return result
 }
 
-// Get NFT metadata
-export async function getNFTMetadata(
-  provider: ethers.Provider,
-  tokenId: number
-) {
-  const contract = await getBloomNFTContract(provider)
-  const uri = await contract.tokenURI(tokenId)
-  const owner = await contract.ownerOf(tokenId)
-  const isInAuction = await contract.isInAuction(tokenId)
+export function parseAuctionData(rawAuction: any): Auction {
+  const isArray = Array.isArray(rawAuction)
   
+  return {
+    tokenId: Number(isArray ? rawAuction[0] ?? 0 : rawAuction.tokenId ?? 0),
+    seller: isArray ? rawAuction[1] ?? '' : rawAuction.seller ?? '',
+    startingBid: BigInt(isArray ? rawAuction[2] ?? 0 : rawAuction.startingBid ?? 0),
+    highestBid: BigInt(isArray ? rawAuction[3] ?? 0 : rawAuction.highestBid ?? 0),
+    highestBidder: isArray ? rawAuction[4] ?? '' : rawAuction.highestBidder ?? '',
+    startTime: BigInt(isArray ? rawAuction[5] ?? 0 : rawAuction.startTime ?? 0),
+    endTime: BigInt(isArray ? rawAuction[6] ?? 0 : rawAuction.endTime ?? 0),
+    active: Boolean(isArray ? rawAuction[7] ?? false : rawAuction.active ?? false),
+    ended: Boolean(isArray ? rawAuction[8] ?? false : rawAuction.ended ?? false),
+  }
+}
+
+export async function getAuction(client: any, tokenId: bigint): Promise<Auction> {
+  const contract = getContract({
+    client,
+    chain: liskSepolia,
+    address: BLOOM_NFT_CONTRACT_ADDRESS,
+  })
+
+  const rawAuction = await readContract({
+    contract,
+    method: 'function getAuction(uint256 tokenId) view returns (uint256 tokenId, address seller, uint256 startingBid, uint256 highestBid, address highestBidder, uint256 startTime, uint256 endTime, bool active, bool ended)',
+    params: [tokenId],
+  })
+
+  return parseAuctionData(rawAuction)
+}
+
+export async function getNFTMetadata(client: any, tokenId: bigint) {
+  const contract = getContract({
+    client,
+    chain: liskSepolia,
+    address: BLOOM_NFT_CONTRACT_ADDRESS,
+  })
+
+  const uri = await readContract({
+    contract,
+    method: 'function tokenURI(uint256 tokenId) view returns (string)',
+    params: [tokenId],
+  })
+
+  const owner = await readContract({
+    contract,
+    method: 'function ownerOf(uint256 tokenId) view returns (address)',
+    params: [tokenId],
+  })
+
+  const isInAuction = await readContract({
+    contract,
+    method: 'function isInAuction(uint256 tokenId) view returns (bool)',
+    params: [tokenId],
+  })
+
   return { uri, owner, isInAuction }
 }
 
-// Get all NFTs owned by address
-export async function getNFTsByOwner(
-  provider: ethers.Provider,
-  ownerAddress: string
-) {
-  const contract = await getBloomNFTContract(provider)
-  const balance = await contract.balanceOf(ownerAddress)
-  const nfts = []
+export async function getNFTsByOwner(client: any, ownerAddress: string): Promise<bigint[]> {
+  const contract = getContract({
+    client,
+    chain: liskSepolia,
+    address: BLOOM_NFT_CONTRACT_ADDRESS,
+  })
+
+  const balance = await readContract({
+    contract,
+    method: 'function balanceOf(address owner) view returns (uint256)',
+    params: [ownerAddress],
+  })
+
+  const nfts: bigint[] = []
   
   for (let i = 0; i < Number(balance); i++) {
-    const tokenId = await contract.tokenOfOwnerByIndex(ownerAddress, i)
-    nfts.push(Number(tokenId))
+    const tokenId = await readContract({
+      contract,
+      method: 'function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)',
+      params: [ownerAddress, BigInt(i)],
+    })
+    nfts.push(BigInt(tokenId))
   }
-  
+
   return nfts
 }
 
-// Get total supply of NFTs
-export async function getTotalSupply(provider: ethers.Provider) {
-  const contract = await getBloomNFTContract(provider)
-  return await contract.totalSupply()
+export async function getTotalSupply(client: any): Promise<bigint> {
+  const contract = getContract({
+    client,
+    chain: liskSepolia,
+    address: BLOOM_NFT_CONTRACT_ADDRESS,
+  })
+
+  return BigInt(
+    await readContract({
+      contract,
+      method: 'function totalSupply() view returns (uint256)',
+      params: [],
+    })
+  )
 }
 
-// Get admin fee
-export async function getAdminFee(provider: ethers.Provider) {
-  const contract = await getBloomNFTContract(provider)
-  return await contract.biayaAdmin()
+export async function getAdminFee(client: any): Promise<bigint> {
+  const contract = getContract({
+    client,
+    chain: liskSepolia,
+    address: BLOOM_NFT_CONTRACT_ADDRESS,
+  })
+
+  return BigInt(
+    await readContract({
+      contract,
+      method: 'function biayaAdmin() view returns (uint256)',
+      params: [],
+    })
+  )
+}
+
+export function convertToIPFSGateway(uri: string): string {
+  if (uri.startsWith('ipfs://')) {
+    return uri.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/')
+  }
+  if (uri.startsWith('Qm') || uri.startsWith('baf')) {
+    return `https://gateway.pinata.cloud/ipfs/${uri}`
+  }
+  return uri
+}
+
+export function formatEther(wei: bigint): string {
+  const ethValue = Number(wei) / 1e18
+  return ethValue.toFixed(4).replace(/\.?0+$/, '')
 }

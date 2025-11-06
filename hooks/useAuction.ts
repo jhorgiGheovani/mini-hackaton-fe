@@ -1,10 +1,9 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { ethers } from 'ethers'
 import { useContract } from './useContract'
 import { Auction, AuctionDisplay } from '@/types/contracts'
-import { getAuction, getTotalSupply, getNFTMetadata } from '@/lib/contract'
+import { getAuction, getTotalSupply, getNFTMetadata, convertToIPFSGateway, formatEther } from '@/lib/contract'
 
 export function useAuction() {
   const { client, isConnected } = useContract()
@@ -15,8 +14,8 @@ export function useAuction() {
   const convertAuctionToDisplay = (auction: Auction): AuctionDisplay => {
     return {
       ...auction,
-      startingBid: ethers.formatEther(auction.startingBid),
-      highestBid: ethers.formatEther(auction.highestBid),
+      startingBid: formatEther(auction.startingBid),
+      highestBid: formatEther(auction.highestBid),
       startTime: Number(auction.startTime),
       endTime: Number(auction.endTime),
       timeRemaining: Math.max(0, Number(auction.endTime) - Math.floor(Date.now() / 1000))
@@ -30,30 +29,30 @@ export function useAuction() {
     setError(null)
 
     try {
-      const provider = new ethers.BrowserProvider((window as any).ethereum)
-      const totalSupply = await getTotalSupply(provider)
+      const totalSupply = await getTotalSupply(client)
       const total = Number(totalSupply)
       
       const auctionsData: AuctionDisplay[] = []
       
       for (let tokenId = 1; tokenId <= total; tokenId++) {
         try {
-          const auctionData = await getAuction(provider, tokenId)
+          const auctionData = await getAuction(client, BigInt(tokenId))
           
           if (auctionData.active || auctionData.ended) {
             const displayAuction = convertAuctionToDisplay(auctionData)
             
-            const { uri, isInAuction } = await getNFTMetadata(provider, tokenId)
+            const { uri, isInAuction } = await getNFTMetadata(client, BigInt(tokenId))
             
             try {
-              const response = await fetch(uri)
+              const gatewayUrl = convertToIPFSGateway(uri)
+              const response = await fetch(gatewayUrl)
               const metadata = await response.json()
               
               displayAuction.nft = {
                 tokenId,
                 owner: auctionData.seller,
                 ipfsHash: uri,
-                imageUrl: metadata.image || uri,
+                imageUrl: convertToIPFSGateway(metadata.image) || uri,
                 isInAuction,
                 metadata
               }

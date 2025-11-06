@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { ethers } from 'ethers'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -167,14 +166,11 @@ export function MintNFTModal({ open, onOpenChange, onSuccess }: MintNFTModalProp
 
       setUploadStep('minting')
 
-      const provider = new ethers.BrowserProvider((window as any).ethereum)
-      const signer = await provider.getSigner()
-
-      const result = await mintNFT(signer, metadataCID, '0.001')
+      const result = await mintNFT(client, account, metadataCID, '0.001')
 
       toast({
         title: 'NFT Minted!',
-        description: `NFT #${result.tokenId} udah di-mint nih!`
+        description: `NFT udah di-mint nih!`
       })
 
       setFormData({

@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from 'react'
-import { ethers } from 'ethers'
+import { useState, useEffect } from 'react'
 import { MarketplaceHeader } from '@/components/marketplace-header'
 import { NFTGrid } from '@/components/nft-grid'
 import { AuctionGrid } from '@/components/auction-grid'
 import { MintNFTModal } from '@/components/mint-nft-modal'
 import { CreateAuctionModal } from '@/components/create-auction-modal'
 import { BidModal } from '@/components/bid-modal'
+import { DebugInfo } from '@/components/debug-info'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { useContract } from '@/hooks/useContract'
 import { useNFT } from '@/hooks/useNFT'
@@ -18,7 +18,7 @@ import { endAuction, cancelAuction } from '@/lib/contract'
 
 export default function Home() {
   const { client, account, isConnected } = useContract()
-  const { myNFTs, loading: nftLoading, refetch: refetchNFTs } = useNFT()
+  const { myNFTs, allNFTs, loading: nftLoading, refetch: refetchNFTs, fetchAllNFTs } = useNFT()
   const { 
     activeAuctions, 
     endedAuctions, 
@@ -38,6 +38,12 @@ export default function Home() {
   const myAuctions = account ? getMyAuctions(account.address) : []
   const myBids = account ? getMyBids(account.address) : []
 
+  useEffect(() => {
+    if (isConnected && client) {
+      fetchAllNFTs()
+    }
+  }, [isConnected, client, fetchAllNFTs])
+
   const handleCreateAuction = (nft: NFT) => {
     setSelectedNFT(nft)
     setAuctionModalOpen(true)
@@ -52,10 +58,7 @@ export default function Home() {
     if (!client || !account) return
 
     try {
-      const provider = new ethers.BrowserProvider((window as any).ethereum)
-      const signer = await provider.getSigner()
-
-      await endAuction(signer, auction.tokenId)
+      await endAuction(client, account, BigInt(auction.tokenId))
 
       toast({
         title: 'Auction Ended!',
@@ -77,10 +80,7 @@ export default function Home() {
     if (!client || !account) return
 
     try {
-      const provider = new ethers.BrowserProvider((window as any).ethereum)
-      const signer = await provider.getSigner()
-
-      await cancelAuction(signer, auction.tokenId)
+      await cancelAuction(client, account, BigInt(auction.tokenId))
 
       toast({
         title: 'Auction Canceled',
@@ -101,6 +101,7 @@ export default function Home() {
   const handleModalSuccess = () => {
     refetchNFTs()
     refetchAuctions()
+    fetchAllNFTs()
   }
 
   if (!isConnected) {
@@ -130,8 +131,12 @@ export default function Home() {
       
       <main className="min-h-screen bg-background">
         <div className="max-w-7xl mx-auto px-6 py-8">
-          <Tabs defaultValue="my-nfts" className="space-y-6">
-            <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-4">
+          <DebugInfo />
+          <Tabs defaultValue="all-nfts" className="space-y-6">
+            <TabsList className="grid w-full max-w-3xl mx-auto grid-cols-5">
+              <TabsTrigger value="all-nfts">
+                All NFTs ({allNFTs.length})
+              </TabsTrigger>
               <TabsTrigger value="my-nfts">
                 My NFTs ({myNFTs.length})
               </TabsTrigger>
@@ -145,6 +150,17 @@ export default function Home() {
                 My Bids ({myBids.length})
               </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="all-nfts" className="space-y-4">
+              <div>
+                <h2 className="text-2xl font-bold mb-2">All NFTs</h2>
+                <p className="text-muted-foreground">Semua NFT yang ada di marketplace</p>
+              </div>
+              <NFTGrid
+                nfts={allNFTs}
+                loading={nftLoading}
+              />
+            </TabsContent>
 
             <TabsContent value="my-nfts" className="space-y-4">
               <div>
