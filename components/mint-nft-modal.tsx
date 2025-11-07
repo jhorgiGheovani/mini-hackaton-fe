@@ -171,7 +171,7 @@ export function MintNFTModal({ open, onOpenChange, onSuccess }: MintNFTModalProp
 
       toast({
         title: 'NFT Minted!',
-        description: `NFT udah di-mint nih!`
+        description: `NFT udah berhasil dibuat nih!`
       })
 
       setFormData({
@@ -201,9 +201,9 @@ export function MintNFTModal({ open, onOpenChange, onSuccess }: MintNFTModalProp
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Mint NFT Baru</DialogTitle>
+          <DialogTitle>Buat NFT lo disini</DialogTitle>
           <DialogDescription>
-            Upload gambar dan metadata, nanti otomatis ke IPFS terus mint ke blockchain
+            Isi form dibawah ini untuk buat NFT lo
           </DialogDescription>
         </DialogHeader>
 
@@ -217,7 +217,7 @@ export function MintNFTModal({ open, onOpenChange, onSuccess }: MintNFTModalProp
               >
                 <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-2" />
                 <p className="text-sm text-muted-foreground">
-                  Klik buat pilih gambar lo
+                  Klik buat pilih gambar
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
                   PNG, JPG, GIF (max 10MB)
@@ -258,7 +258,7 @@ export function MintNFTModal({ open, onOpenChange, onSuccess }: MintNFTModalProp
               <Label htmlFor="name">Nama NFT *</Label>
               <Input
                 id="name"
-                placeholder="Ocean Dreams #1"
+                placeholder="Masukin nama NFT"
                 value={formData.name}
                 onChange={(e) => handleInputChange('name', e.target.value)}
                 disabled={loading}
@@ -269,7 +269,7 @@ export function MintNFTModal({ open, onOpenChange, onSuccess }: MintNFTModalProp
               <Label htmlFor="description">Deskripsi *</Label>
               <Textarea
                 id="description"
-                placeholder="Ceritain tentang NFT lo..."
+                placeholder="Masukin deskripsi NFT"
                 value={formData.description}
                 onChange={(e) => handleInputChange('description', e.target.value)}
                 disabled={loading}
@@ -281,7 +281,7 @@ export function MintNFTModal({ open, onOpenChange, onSuccess }: MintNFTModalProp
               <Label htmlFor="artist">Artist</Label>
               <Input
                 id="artist"
-                placeholder="Nama artist lo"
+                placeholder="Masukin nama artist"
                 value={formData.artist}
                 onChange={(e) => handleInputChange('artist', e.target.value)}
                 disabled={loading}
@@ -331,7 +331,7 @@ export function MintNFTModal({ open, onOpenChange, onSuccess }: MintNFTModalProp
               ) : (
                 <>
                   <ImageIcon className="mr-2 h-4 w-4" />
-                  Upload & Mint NFT
+                  Buat NFT 
                 </>
               )}
             </Button>
