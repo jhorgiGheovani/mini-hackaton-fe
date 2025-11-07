@@ -82,9 +82,11 @@ export function BidModal({ open, onOpenChange, auction, onSuccess }: BidModalPro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] border-2 border-green-500/30 shadow-2xl backdrop-blur-xl">
         <DialogHeader>
-          <DialogTitle>Place Bid</DialogTitle>
+          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+            💰 Place Bid
+          </DialogTitle>
           <DialogDescription>
             Masukin bid amount lo buat NFT ini
           </DialogDescription>
@@ -150,7 +152,7 @@ export function BidModal({ open, onOpenChange, auction, onSuccess }: BidModalPro
             <Button
               type="submit"
               disabled={loading || !bidAmount}
-              className="flex-1"
+              className="flex-1 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white shadow-lg"
             >
               {loading ? (
                 <>

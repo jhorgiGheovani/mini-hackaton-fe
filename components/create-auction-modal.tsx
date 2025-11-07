@@ -100,9 +100,11 @@ export function CreateAuctionModal({ open, onOpenChange, nft, onSuccess }: Creat
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] border-2 border-blue-500/30 shadow-2xl backdrop-blur-xl">
         <DialogHeader>
-          <DialogTitle>Buat Auction</DialogTitle>
+          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            🔨 Create Auction
+          </DialogTitle>
           <DialogDescription>
             Set starting bid dan durasi auction lo
           </DialogDescription>
@@ -171,7 +173,7 @@ export function CreateAuctionModal({ open, onOpenChange, nft, onSuccess }: Creat
             <Button
               type="submit"
               disabled={loading || !startingBid}
-              className="flex-1"
+              className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg"
             >
               {loading ? (
                 <>

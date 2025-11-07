@@ -36,13 +36,16 @@ export function AuctionGrid({
 
   if (auctions.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-4">
-          <span className="text-4xl">🔨</span>
+      <div className="flex flex-col items-center justify-center py-20 text-center animate-scale-in">
+        <div className="relative w-32 h-32 rounded-3xl flex items-center justify-center mb-6 animate-glow-pulse">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 rounded-3xl animate-gradient opacity-20" />
+          <span className="text-6xl relative z-10 animate-float">🔨</span>
         </div>
-        <h3 className="text-xl font-semibold mb-2">Belum ada auction</h3>
-        <p className="text-muted-foreground">
-          Buat auction pertama lo atau tunggu auction lain
+        <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+          Belum ada auction
+        </h3>
+        <p className="text-muted-foreground max-w-md">
+          Buat auction pertama lo atau tunggu auction lain dimulai
         </p>
       </div>
     )

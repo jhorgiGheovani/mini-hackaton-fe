@@ -199,11 +199,13 @@ export function MintNFTModal({ open, onOpenChange, onSuccess }: MintNFTModalProp
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto border-2 border-purple-500/30 shadow-2xl backdrop-blur-xl">
         <DialogHeader>
-          <DialogTitle>Buat NFT lo disini</DialogTitle>
+          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            🎨 Mint NFT
+          </DialogTitle>
           <DialogDescription>
-            Isi form dibawah ini untuk buat NFT lo
+            Isi form dibawah ini buat bikin NFT lo yang kece
           </DialogDescription>
         </DialogHeader>
 
@@ -320,7 +322,7 @@ export function MintNFTModal({ open, onOpenChange, onSuccess }: MintNFTModalProp
             <Button
               type="submit"
               disabled={loading || !selectedFile || !formData.name || !formData.description}
-              className="flex-1"
+              className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg"
             >
               {loading ? (
                 <>

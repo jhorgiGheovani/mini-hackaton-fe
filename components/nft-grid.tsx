@@ -28,13 +28,16 @@ export function NFTGrid({ nfts, userAddress, loading, onCreateAuction, onViewDet
 
   if (nfts.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-4">
-          <span className="text-4xl">🖼️</span>
+      <div className="flex flex-col items-center justify-center py-20 text-center animate-scale-in">
+        <div className="relative w-32 h-32 rounded-3xl flex items-center justify-center mb-6 animate-glow-pulse">
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-500 rounded-3xl animate-gradient opacity-20" />
+          <span className="text-6xl relative z-10 animate-float">🖼️</span>
         </div>
-        <h3 className="text-xl font-semibold mb-2">Belum ada NFT nih</h3>
-        <p className="text-muted-foreground">
-          Mint NFT pertama lo atau beli di auction
+        <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
+          Belum ada NFT nih
+        </h3>
+        <p className="text-muted-foreground max-w-md">
+          Mint NFT pertama lo atau beli di auction buat mulai koleksi
         </p>
       </div>
     )

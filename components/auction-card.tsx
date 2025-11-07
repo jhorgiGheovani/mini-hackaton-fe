@@ -57,72 +57,77 @@ export function AuctionCard({ auction, userAddress, onBid, onEnd, onCancel }: Au
 
   const getStatusBadge = () => {
     if (!auction.active) {
-      return <Badge variant="secondary">Ended</Badge>
+      return <Badge className="bg-gray-600 text-white border-0">⏹️ Ended</Badge>
     }
     if (canEnd) {
-      return <Badge className="bg-red-500">Ready to End</Badge>
+      return <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white border-0 shadow-lg">🔔 Ready</Badge>
     }
     if (isActive) {
-      return <Badge className="bg-green-500">Active</Badge>
+      return <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg animate-pulse">⚡ Live</Badge>
     }
-    return <Badge variant="secondary">Ended</Badge>
+    return <Badge className="bg-gray-600 text-white border-0">⏹️ Ended</Badge>
   }
 
   return (
-    <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300">
-      <div className="relative aspect-square bg-muted">
+    <Card className="group overflow-hidden border-2 border-transparent hover:border-blue-500/50 transition-all duration-500 animate-scale-in backdrop-blur-sm bg-card/95 shadow-xl hover:shadow-2xl hover:-translate-y-2">
+      <div className="relative aspect-square bg-gradient-to-br from-blue-500/10 to-purple-500/10 overflow-hidden">
         <Image
           src={auction.nft?.imageUrl || '/placeholder.svg'}
           alt={auction.nft?.metadata?.name || `NFT #${auction.tokenId}`}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          className="object-cover group-hover:scale-110 transition-transform duration-700"
           onError={(e) => {
             const target = e.target as HTMLImageElement
             target.src = '/placeholder.svg'
           }}
         />
-        <div className="absolute top-2 right-2 flex gap-2">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute top-3 right-3 flex flex-col gap-2">
           {getStatusBadge()}
           {isHighestBidder && auction.active && (
-            <Badge className="bg-blue-500">
+            <Badge className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg border-0 animate-glow-pulse">
               <Trophy className="w-3 h-3 mr-1" />
-              Lo Lead
+              Leading bidder!
             </Badge>
           )}
         </div>
       </div>
       
-      <CardContent className="p-4 space-y-3">
+      <CardContent className="p-5 space-y-3 relative">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500" />
+        
         <div>
-          <h3 className="font-semibold text-lg truncate">
+          <h3 className="font-bold text-lg truncate bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             {auction.nft?.metadata?.name || `NFT #${auction.tokenId}`}
           </h3>
-          <p className="text-sm text-muted-foreground truncate">
+          <p className="text-sm text-muted-foreground truncate mt-1">
             {auction.nft?.metadata?.description || 'No description'}
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <User className="w-4 h-4" />
+        <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 rounded-lg px-3 py-2">
+          <User className="w-3.5 h-3.5" />
           <span className="font-mono">{formatAddress(auction.seller)}</span>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2.5 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-lg p-3 border border-border/50">
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Starting Bid:</span>
-            <span className="font-medium">{auction.startingBid} ETH</span>
+            <span className="text-muted-foreground">Starting:</span>
+            <span className="font-semibold">{auction.startingBid} ETH</span>
           </div>
           
           {auction.highestBid !== '0.0' && (
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Current Bid:</span>
-              <span className="font-bold text-primary">{auction.highestBid} ETH</span>
+              <span className="text-muted-foreground">Current:</span>
+              <span className="font-bold text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                {auction.highestBid} ETH
+              </span>
             </div>
           )}
 
-          <div className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-2 text-sm pt-1 border-t border-border/30">
             <Clock className="w-4 h-4 text-muted-foreground" />
-            <span className={isActive ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}>
+            <span className={isActive ? 'text-green-600 dark:text-green-400 font-medium' : 'text-muted-foreground'}>
               {timeLeft}
             </span>
           </div>
@@ -132,7 +137,7 @@ export function AuctionCard({ auction, userAddress, onBid, onEnd, onCancel }: Au
       <CardFooter className="p-4 pt-0 flex gap-2">
         {isActive && !isOwner && onBid && (
           <Button
-            className="flex-1"
+            className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg"
             onClick={() => onBid(auction)}
           >
             <Hammer className="w-4 h-4 mr-1" />
@@ -142,19 +147,17 @@ export function AuctionCard({ auction, userAddress, onBid, onEnd, onCancel }: Au
         
         {canEnd && (isOwner || isHighestBidder) && onEnd && (
           <Button
-            className="flex-1"
-            variant="default"
+            className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg"
             onClick={() => onEnd(auction)}
           >
             <Trophy className="w-4 h-4 mr-1" />
-            End Auction
+            End
           </Button>
         )}
 
         {canCancel && onCancel && (
           <Button
-            className="flex-1"
-            variant="destructive"
+            className="flex-1 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white shadow-lg"
             onClick={() => onCancel(auction)}
           >
             <X className="w-4 h-4 mr-1" />
@@ -163,7 +166,7 @@ export function AuctionCard({ auction, userAddress, onBid, onEnd, onCancel }: Au
         )}
 
         {isOwner && auction.active && !canEnd && (
-          <Button className="flex-1" disabled variant="outline">
+          <Button className="flex-1 bg-muted/50" disabled variant="outline">
             Your Auction
           </Button>
         )}

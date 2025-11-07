@@ -113,16 +113,49 @@ export default function Home() {
     return (
       <>
         <MarketplaceHeader />
-        <main className="min-h-screen bg-background">
-          <div className="max-w-7xl mx-auto px-6 py-20">
-            <div className="flex flex-col items-center justify-center text-center space-y-4">
-              <div className="w-32 h-32 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                <span className="text-6xl">🔐</span>
+        <main className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-cyan-50 dark:from-gray-950 dark:via-purple-950/20 dark:to-blue-950/20 relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-20" />
+          <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl animate-float" />
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-float" style={{animationDelay: '2s'}} />
+          
+          <div className="max-w-7xl mx-auto px-6 py-20 relative z-10">
+            <div className="flex flex-col items-center justify-center text-center space-y-8 animate-scale-in">
+              <div className="relative w-40 h-40 rounded-3xl flex items-center justify-center animate-glow-pulse">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-500 rounded-3xl animate-gradient" />
+                <span className="text-7xl relative z-10 animate-float">🔐</span>
               </div>
-              <h2 className="text-3xl font-bold">Connect Wallet</h2>
-              <p className="text-muted-foreground max-w-md">
-                Connect wallet lo buat mulai mint NFT, create auction, atau bid di marketplace
-              </p>
+              
+              <div className="space-y-4 max-w-2xl">
+                <h2 className="text-5xl font-black bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                  Welcome to BloomBid
+                </h2>
+                <p className="text-xl text-muted-foreground">
+                Premium NFT Auction Marketplace
+                </p>
+                <p className="text-muted-foreground max-w-md mx-auto pt-2">
+                  Connect wallet lo buat mulai mint NFT, create auction, atau bid di marketplace yang paling kece!
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 w-full max-w-4xl">
+                <div className="p-6 rounded-2xl bg-card/80 backdrop-blur-sm border-2 border-purple-500/20 hover:border-purple-500/50 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1">
+                  <div className="text-4xl mb-4">🎨</div>
+                  <h3 className="font-bold text-lg mb-2">Mint NFT</h3>
+                  <p className="text-sm text-muted-foreground">Bikin dan upload karya seni digital lo</p>
+                </div>
+                
+                <div className="p-6 rounded-2xl bg-card/80 backdrop-blur-sm border-2 border-blue-500/20 hover:border-blue-500/50 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1">
+                  <div className="text-4xl mb-4">🔨</div>
+                  <h3 className="font-bold text-lg mb-2">Create Auction</h3>
+                  <p className="text-sm text-muted-foreground">Auction NFT lo dan dapetin best price</p>
+                </div>
+                
+                <div className="p-6 rounded-2xl bg-card/80 backdrop-blur-sm border-2 border-cyan-500/20 hover:border-cyan-500/50 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1">
+                  <div className="text-4xl mb-4">💎</div>
+                  <h3 className="font-bold text-lg mb-2">Collect & Bid</h3>
+                  <p className="text-sm text-muted-foreground">Bid auction dan koleksi NFT favorit</p>
+                </div>
+              </div>
             </div>
           </div>
         </main>
@@ -134,30 +167,54 @@ export default function Home() {
     <>
       <MarketplaceHeader onMintClick={() => setMintModalOpen(true)} />
       
-      <main className="min-h-screen bg-background">
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <Tabs defaultValue="all-nfts" className="space-y-6">
-            <TabsList className="grid w-full max-w-3xl mx-auto grid-cols-5">
-              <TabsTrigger value="all-nfts">
-                All NFTs ({allNFTs.length})
+      <main className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-cyan-50 dark:from-gray-950 dark:via-purple-950/20 dark:to-blue-950/20 relative">
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10" />
+        
+        <div className="max-w-7xl mx-auto px-6 py-8 relative z-10">
+          <Tabs defaultValue="all-nfts" className="space-y-8">
+            <TabsList className="grid w-full max-w-4xl mx-auto grid-cols-5 bg-card/80 backdrop-blur-sm border-2 border-purple-500/20 p-1.5 h-auto shadow-lg">
+              <TabsTrigger 
+                value="all-nfts"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white py-3 text-sm font-semibold"
+              >
+                🌐 All NFTs
+                <span className="block text-xs mt-0.5">({allNFTs.length})</span>
               </TabsTrigger>
-              <TabsTrigger value="my-nfts">
-                My NFTs ({myNFTs.length})
+              <TabsTrigger 
+                value="my-nfts"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-blue-600 data-[state=active]:text-white py-3 text-sm font-semibold"
+              >
+                🎨 My NFTs
+                <span className="block text-xs mt-0.5">({myNFTs.length})</span>
               </TabsTrigger>
-              <TabsTrigger value="active-auctions">
-                Active Auctions ({activeAuctions.length})
+              <TabsTrigger 
+                value="active-auctions"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-purple-600 data-[state=active]:text-white py-3 text-sm font-semibold"
+              >
+                ⚡ Live
+                <span className="block text-xs mt-0.5">({activeAuctions.length})</span>
               </TabsTrigger>
-              <TabsTrigger value="my-auctions">
-                My Auctions ({myAuctions.length})
+              <TabsTrigger 
+                value="my-auctions"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-600 data-[state=active]:text-white py-3 text-sm font-semibold"
+              >
+                🔨 My Auctions
+                <span className="block text-xs mt-0.5">({myAuctions.length})</span>
               </TabsTrigger>
-              <TabsTrigger value="my-bids">
-                My Bids ({myBids.length})
+              <TabsTrigger 
+                value="my-bids"
+                className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-600 data-[state=active]:to-blue-600 data-[state=active]:text-white py-3 text-sm font-semibold"
+              >
+                💎 My Bids
+                <span className="block text-xs mt-0.5">({myBids.length})</span>
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="all-nfts" className="space-y-4">
-              <div>
-                <h2 className="text-2xl font-bold mb-2">All NFTs</h2>
+            <TabsContent value="all-nfts" className="space-y-6 animate-fade-in">
+              <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-purple-500/20 shadow-xl">
+                <h2 className="text-3xl font-black bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                  All NFTs
+                </h2>
                 <p className="text-muted-foreground">Semua NFT yang ada di marketplace</p>
               </div>
               <NFTGrid
@@ -168,9 +225,11 @@ export default function Home() {
               />
             </TabsContent>
 
-            <TabsContent value="my-nfts" className="space-y-4">
-              <div>
-                <h2 className="text-2xl font-bold mb-2">My NFTs</h2>
+            <TabsContent value="my-nfts" className="space-y-6 animate-fade-in">
+              <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-purple-500/20 shadow-xl">
+                <h2 className="text-3xl font-black bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                  My NFTs
+                </h2>
                 <p className="text-muted-foreground">NFT collection lo</p>
               </div>
               <NFTGrid
@@ -181,9 +240,11 @@ export default function Home() {
               />
             </TabsContent>
 
-            <TabsContent value="active-auctions" className="space-y-4">
-              <div>
-                <h2 className="text-2xl font-bold mb-2">Active Auctions</h2>
+            <TabsContent value="active-auctions" className="space-y-6 animate-fade-in">
+              <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-blue-500/20 shadow-xl">
+                <h2 className="text-3xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                  Active Auctions
+                </h2>
                 <p className="text-muted-foreground">Semua auction yang lagi jalan</p>
               </div>
               <AuctionGrid
@@ -196,9 +257,11 @@ export default function Home() {
               />
             </TabsContent>
 
-            <TabsContent value="my-auctions" className="space-y-4">
-              <div>
-                <h2 className="text-2xl font-bold mb-2">My Auctions</h2>
+            <TabsContent value="my-auctions" className="space-y-6 animate-fade-in">
+              <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-blue-500/20 shadow-xl">
+                <h2 className="text-3xl font-black bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent mb-2">
+                  My Auctions
+                </h2>
                 <p className="text-muted-foreground">Auction yang lo buat</p>
               </div>
               <AuctionGrid
@@ -210,9 +273,11 @@ export default function Home() {
               />
             </TabsContent>
 
-            <TabsContent value="my-bids" className="space-y-4">
-              <div>
-                <h2 className="text-2xl font-bold mb-2">My Bids</h2>
+            <TabsContent value="my-bids" className="space-y-6 animate-fade-in">
+              <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-cyan-500/20 shadow-xl">
+                <h2 className="text-3xl font-black bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                  My Bids
+                </h2>
                 <p className="text-muted-foreground">Auction yang lo bid</p>
               </div>
               <AuctionGrid
